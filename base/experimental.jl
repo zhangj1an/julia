@@ -100,5 +100,19 @@ macro sync(block)
     end
 end
 
+"""
+    Experimental.@optlevel n
+
+Set the optimization level (equivalent to the `-O` command line argument)
+for code in the current module.
+
+Supported values are 0, 1, 2, and 3.
+
+The effective optimization level is the minimum of that specified on the
+command line and in per-module settings.
+"""
+macro optlevel(n::Int)
+    return Expr(:meta, :optlevel, n)
+end
 
 end
