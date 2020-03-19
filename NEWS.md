@@ -66,6 +66,14 @@ Language changes
 * The line number of function definitions is now added by the parser as an
   additional `LineNumberNode` at the start of each function body ([#35138]).
 
+Command-line option changes
+---------------------------
+
+  * `-t N`, `--threads N` starts Julia with `N` threads. This option takes precedence over
+    `JULIA_NUM_THREADS`. The specified number of threads only applies to the main Julia
+    process and it does not propagate to worker processes spawned using the `-p`/`--procs`
+    or `--machine-file` command line arguments ([#35108]).
+
 Multi-threading changes
 -----------------------
 
