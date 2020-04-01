@@ -261,7 +261,7 @@ Waits until `testcb` returns `true` or for `secs` seconds, whichever is earlier.
 `testcb` is polled every `pollint` seconds. The minimum duration for `secs` and `pollint` is
 1 millisecond or `0.001`.
 
-Returns :ok, :timed_out, or :error
+Returns :ok or :timed_out
 """
 function timedwait(testcb::Function, secs::Real; pollint::Real=0.1)
     pollint >= 1e-3 || throw(ArgumentError("pollint must be ≥ 1 millisecond"))
@@ -271,12 +271,12 @@ function timedwait(testcb::Function, secs::Real; pollint::Real=0.1)
     function timercb(aw)
         try
             if testcb()
-                put!(done, :ok)
+                put!(done, (:ok, nothing))
             elseif (time_ns() - start) > nsecs
-                put!(done, :timed_out)
+                put!(done, (:timed_out, nothing))
             end
         catch e
-            put!(done, :error)
+            put!(done, (:error, e))
         finally
             isready(done) && close(aw)
         end
@@ -285,7 +285,8 @@ function timedwait(testcb::Function, secs::Real; pollint::Real=0.1)
 
     if !testcb()
         t = Timer(timercb, pollint, interval = pollint)
-        ret = fetch(done)::Symbol
+        ret, e = fetch(done)
+        ret === :error && rethrow(e)
         close(t)
     else
         ret = :ok
