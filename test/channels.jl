@@ -265,7 +265,7 @@ end
     @test duration ≈ 1 atol=0.2
 
     duration = @elapsed timedwait(() -> false, 0; pollint=1)
-    @test duration ≈ 1 atol=0.05
+    @test duration ≈ 1 atol=0.2
 end
 
 @testset "timedwait on multiple channels" begin
